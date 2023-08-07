@@ -8,6 +8,7 @@ public class CustomerAggregate
     private readonly LastName _lastName;
     private readonly DateOfBirth _dateOfBirth;
     private readonly PhoneNumber _phoneNumber;
+    private readonly Email _email;
     private readonly Guid _id;
 
     public CustomerAggregate()
@@ -15,12 +16,13 @@ public class CustomerAggregate
         _id = Guid.NewGuid();
     }
 
-    public CustomerAggregate(string firstName,string lastName,string phoneNumber,DateTimeOffset? dateOfBirth = null)
+    public CustomerAggregate(string firstName,string lastName,string phoneNumber,string email,DateTimeOffset? dateOfBirth = null)
     {
         _id = Guid.NewGuid();
         _firstName = firstName;
         _lastName = lastName;
         _phoneNumber = phoneNumber;
+        _email = email;
         if (dateOfBirth != null)
         {
             _dateOfBirth = dateOfBirth.Value;
@@ -31,6 +33,7 @@ public class CustomerAggregate
     public string GetLastName => _lastName;
     public DateTimeOffset GetDateOfBirth => _dateOfBirth;
     public string GetPhoneNumber => _phoneNumber;
+    public string GetEmail => _email;
 
     public Guid GetId()
     {
