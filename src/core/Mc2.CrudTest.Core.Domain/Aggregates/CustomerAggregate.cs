@@ -12,8 +12,11 @@ public class CustomerAggregate : AggregateRoot
     private PhoneNumber _phoneNumber;
     private Email _email;
     private BankAccountNumber _accountNumber;
-    private Guid _id;
-    
+
+    public CustomerAggregate()
+    {
+        
+    }
     public CustomerAggregate(string firstName, string lastName, string phoneNumber, string email, string accountNumber, DateTimeOffset? dateOfBirth = null)
     {
         RaiseEvent(new CustomerCreatedEvent
