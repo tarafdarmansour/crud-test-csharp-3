@@ -42,4 +42,26 @@ public class CustomerAggregate_UntiTest
         CustomerAggregate customer = new CustomerAggregate( "somethings", myLastName);
         customer.GetLastName.ShouldBe(myLastName);
     }
+
+    [Fact]
+    public void WhenICreateNewCustomerAggregate_AndDateOfBirthIsNull_ItShouldNotThrowException()
+    {
+        Action action = () => { CustomerAggregate customer = new CustomerAggregate("somethings", "somethingelse"); };
+        action.ShouldNotThrow();
+    }
+
+    [Fact]
+    public void WhenICreateNewCustomerAggregate_AndDateOfBirthIsInvalid_ItShouldThrowException()
+    {
+        Action action = () => { CustomerAggregate customer = new CustomerAggregate("somethings", "somethingelse",DateTimeOffset.Now.AddHours(1)); };
+        action.ShouldThrow<InvalidDateOfBirthException>();
+    }
+
+    [Fact]
+    public void WhenICreateNewCustomerAggregate_AndSetDateOfBirth_ItShouldBeSameValue()
+    {
+        DateTimeOffset myBirthDate = new DateTimeOffset(1985, 5, 13,10,10,10,new TimeSpan(0));
+        CustomerAggregate customer = new CustomerAggregate("somethings", "somethingelse", myBirthDate);
+        customer.GetDateOfBirth.ShouldBe(myBirthDate);
+    }
 }
