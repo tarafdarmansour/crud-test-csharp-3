@@ -26,6 +26,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     [Fact]
     public async void GivenNewCustomerCommand_AndDataIsValid_WhenIExecuteCommand_AndGetCustomerById_ItShouldBeSame()
     {
+        Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEventsTest");
         NewCustomerCommand newCustomerCommand = new()
         {
             DateOfBirth = DateTimeOffset.Now.AddYears(-38),

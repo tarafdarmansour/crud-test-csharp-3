@@ -3,16 +3,19 @@ using Mc2.CrudTest.Core.Domain.Exceptions;
 using Mc2.CrudTest.Shared.Domain;
 using Mc2.CrudTest.Shared.Events;
 using Mc2.CrudTest.Shared.Infrastructure;
+using Mc2.CrudTest.Shared.Producers;
 
 namespace Mc2.CrudTest.Infra.Store;
 
 public class EventStore : IEventStore
 {
     private readonly IEventStoreRepository _eventStoreRepository;
+    private readonly IEventProducer _eventProducer;
 
-    public EventStore(IEventStoreRepository eventStoreRepository)
+    public EventStore(IEventStoreRepository eventStoreRepository, IEventProducer eventProducer)
     {
         _eventStoreRepository = eventStoreRepository;
+        _eventProducer = eventProducer;
     }
 
     public async Task<List<BaseEvent>> GetEventsAsync(Guid aggregateId)
@@ -48,8 +51,10 @@ public class EventStore : IEventStore
                 EventType = eventType,
                 EventData = @event
             };
-
             await _eventStoreRepository.SaveAsync(eventModel);
+
+            var topic = Environment.GetEnvironmentVariable("RABBIT_EXCHANGE");
+            await _eventProducer.ProduceAsync(topic, @event, eventType);
         }
     }
 }

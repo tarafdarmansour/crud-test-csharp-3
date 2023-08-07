@@ -3,14 +3,16 @@ using Mc2.CrudTest.Core.Domain.Aggregates;
 using Mc2.CrudTest.Core.Domain.Events;
 using Mc2.CrudTest.Infra.Configs;
 using Mc2.CrudTest.Infra.Handlers;
+using Mc2.CrudTest.Infra.Producers;
 using Mc2.CrudTest.Infra.Repositories;
 using Mc2.CrudTest.Infra.Store;
 using Mc2.CrudTest.Shared.Domain;
 using Mc2.CrudTest.Shared.Events;
 using Mc2.CrudTest.Shared.Handlers;
 using Mc2.CrudTest.Shared.Infrastructure;
-using Microsoft.AspNetCore.ResponseCompression;
+using Mc2.CrudTest.Shared.Producers;
 using MongoDB.Bson.Serialization;
+using RawRabbit.Extensions.Client;
 
 namespace Mc2.CrudTest.Presentation
 {
@@ -27,12 +29,16 @@ namespace Mc2.CrudTest.Presentation
             builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
             builder.Services.AddTransient<IEventStoreRepository, EventStoreRepository>();
             builder.Services.AddTransient<IEventStore, EventStore>();
+            builder.Services.AddTransient<IEventProducer, EventProducer>();
             builder.Services.AddTransient<IEventSourcingHandler<CustomerAggregate>, EventSourcingHandler>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(NewCustomerCommand).Assembly));
-
+            builder.Services.AddRawRabbit(
+                cfg => cfg.AddJsonFile(
+                    builder.Environment.EnvironmentName == "Production" ? "rabbit.Production.json" : "rabbit.Development.json")
+            );
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
