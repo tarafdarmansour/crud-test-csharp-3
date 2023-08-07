@@ -2,6 +2,7 @@ using Mc2.CrudTest.Core.Application.Commands.NewCustomer;
 using Mc2.CrudTest.Core.Domain.Aggregates;
 using Mc2.CrudTest.Core.Domain.Events;
 using Mc2.CrudTest.Infra.Configs;
+using Mc2.CrudTest.Infra.DataAccess;
 using Mc2.CrudTest.Infra.Handlers;
 using Mc2.CrudTest.Infra.Producers;
 using Mc2.CrudTest.Infra.Repositories;
@@ -11,6 +12,7 @@ using Mc2.CrudTest.Shared.Events;
 using Mc2.CrudTest.Shared.Handlers;
 using Mc2.CrudTest.Shared.Infrastructure;
 using Mc2.CrudTest.Shared.Producers;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson.Serialization;
 using RawRabbit.Extensions.Client;
 
@@ -21,11 +23,18 @@ namespace Mc2.CrudTest.Presentation
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
+
+
+            Action<DbContextOptionsBuilder> configureDbContext = o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+            builder.Services.AddDbContext<DatabaseContext>(configureDbContext);
+            builder.Services.AddSingleton<DatabaseContextFactory>(new DatabaseContextFactory(configureDbContext));
+
+            var dataContext = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
+            dataContext.Database.EnsureCreated();
+
             BsonClassMap.RegisterClassMap<BaseEvent>();
             BsonClassMap.RegisterClassMap<CustomerCreatedEvent>();
 
-            // Add services to the container.
             builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
             builder.Services.AddTransient<IEventStoreRepository, EventStoreRepository>();
             builder.Services.AddTransient<IEventStore, EventStore>();
