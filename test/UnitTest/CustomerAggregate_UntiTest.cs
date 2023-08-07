@@ -1,5 +1,8 @@
+using System.Reflection;
+using FluentAssertions;
 using Mc2.CrudTest.Core.Domain.Aggregates;
 using Mc2.CrudTest.Core.Domain.Exceptions;
+using Mc2.CrudTest.Core.Domain.ValueObjects;
 using Shouldly;
 
 namespace Mc2.CrudTest.UnitTest;
@@ -13,7 +16,7 @@ public class CustomerAggregate_UntiTest
     [Fact]
     public void WhenICreateNewCustomerAggregate_ItShouldHaveValidId()
     {
-        CustomerAggregate customer = new();
+        CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, defaultEmail, defaulAccuntNumber);
         Guid.TryParse(customer.GetId().ToString(), out Guid _).ShouldBe(true);
     }
 
@@ -21,7 +24,8 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndFirstNameIsNull_ItShouldThrowException()
     {
         Action action = () => {  CustomerAggregate customer = new(null, someting, defaultPhoneNumber, defaultEmail, defaulAccuntNumber); };
-        action.ShouldThrow<InvalidFirstNameException>();
+        action.Should().ThrowExactly<TargetInvocationException>()
+            .WithInnerException<InvalidFirstNameException>();
     }
 
     [Fact]
@@ -36,7 +40,8 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndLastNameIsNull_ItShouldThrowException()
     {
         Action action = () => { CustomerAggregate customer = new(someting,null, defaultPhoneNumber,defaultEmail,defaulAccuntNumber); };
-        action.ShouldThrow<InvalidLastNameException>();
+        action.Should().ThrowExactly<TargetInvocationException>()
+            .WithInnerException<InvalidLastNameException>();
     }
 
     [Fact]
@@ -58,7 +63,8 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndDateOfBirthIsInvalid_ItShouldThrowException()
     {
         Action action = () => { CustomerAggregate customer = new(someting,someting,defaultPhoneNumber,defaultEmail,defaulAccuntNumber,DateTimeOffset.Now.AddHours(1)); };
-        action.ShouldThrow<InvalidDateOfBirthException>();
+        action.Should().ThrowExactly<TargetInvocationException>()
+            .WithInnerException<InvalidDateOfBirthException>();
     }
 
     [Fact]
@@ -77,7 +83,8 @@ public class CustomerAggregate_UntiTest
             CustomerAggregate customer = new(someting, someting, null,defaultEmail, defaulAccuntNumber);
 
         };
-        action.ShouldThrow<InvalidPhoneNumberException>();
+        action.Should().ThrowExactly<TargetInvocationException>()
+            .WithInnerException<InvalidPhoneNumberException>();
     }
 
     [Theory]
@@ -90,7 +97,8 @@ public class CustomerAggregate_UntiTest
             CustomerAggregate customer = new(someting, someting, invalidNumber, defaultEmail, defaulAccuntNumber);
 
         };
-        action.ShouldThrow<InvalidPhoneNumberException>();
+        action.Should().ThrowExactly<TargetInvocationException>()
+            .WithInnerException<InvalidPhoneNumberException>();
     }
 
     [Fact]
@@ -123,7 +131,8 @@ public class CustomerAggregate_UntiTest
             CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, invalidEmail, defaulAccuntNumber);
 
         };
-        action.ShouldThrow<InvalidEmailException>();
+        action.Should().ThrowExactly<TargetInvocationException>()
+            .WithInnerException<InvalidEmailException>();
     }
 
     [Fact]
@@ -155,7 +164,8 @@ public class CustomerAggregate_UntiTest
             CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, defaultEmail, invalidAccountNumber);
 
         };
-        action.ShouldThrow<InvalidIbanException>();
+        action.Should().ThrowExactly<TargetInvocationException>()
+            .WithInnerException<InvalidIbanException>();
     }
 
     [Fact]
