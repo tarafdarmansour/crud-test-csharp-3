@@ -9,6 +9,7 @@ public class CustomerAggregate_UntiTest
     private readonly string someting = "something";
     private readonly string defaultPhoneNumber = "+989396135891";
     private readonly string defaultEmail = "tarafdar.mansour@gmail.com";
+    private readonly string defaulAccuntNumber = "GB03SHHZ28711587148418";
     [Fact]
     public void WhenICreateNewCustomerAggregate_ItShouldHaveValidId()
     {
@@ -19,7 +20,7 @@ public class CustomerAggregate_UntiTest
     [Fact]
     public void WhenICreateNewCustomerAggregate_AndFirstNameIsNull_ItShouldThrowException()
     {
-        Action action = () => {  CustomerAggregate customer = new(null, someting, defaultPhoneNumber, defaultEmail); };
+        Action action = () => {  CustomerAggregate customer = new(null, someting, defaultPhoneNumber, defaultEmail, defaulAccuntNumber); };
         action.ShouldThrow<InvalidFirstNameException>();
     }
 
@@ -27,14 +28,14 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndSetFirstName_ItShouldBeSameValue()
     {
         string myFirstName = "Mansour";
-        CustomerAggregate customer = new(myFirstName, someting, defaultPhoneNumber, defaultEmail);
+        CustomerAggregate customer = new(myFirstName, someting, defaultPhoneNumber, defaultEmail, defaulAccuntNumber);
         customer.GetFirstName.ShouldBe(myFirstName);
     }
 
     [Fact]
     public void WhenICreateNewCustomerAggregate_AndLastNameIsNull_ItShouldThrowException()
     {
-        Action action = () => { CustomerAggregate customer = new(someting,null, defaultPhoneNumber,defaultEmail); };
+        Action action = () => { CustomerAggregate customer = new(someting,null, defaultPhoneNumber,defaultEmail,defaulAccuntNumber); };
         action.ShouldThrow<InvalidLastNameException>();
     }
 
@@ -42,21 +43,21 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndSetLastName_ItShouldBeSameValue()
     {
         string myLastName = "Tarafdar";
-        CustomerAggregate customer = new(someting, myLastName,defaultPhoneNumber, defaultEmail);
+        CustomerAggregate customer = new(someting, myLastName,defaultPhoneNumber, defaultEmail, defaulAccuntNumber);
         customer.GetLastName.ShouldBe(myLastName);
     }
 
     [Fact]
     public void WhenICreateNewCustomerAggregate_AndDateOfBirthIsNull_ItShouldNotThrowException()
     {
-        Action action = () => { CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, defaultEmail); };
+        Action action = () => { CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, defaultEmail,defaulAccuntNumber); };
         action.ShouldNotThrow();
     }
 
     [Fact]
     public void WhenICreateNewCustomerAggregate_AndDateOfBirthIsInvalid_ItShouldThrowException()
     {
-        Action action = () => { CustomerAggregate customer = new(someting,someting,defaultPhoneNumber,defaultEmail,DateTimeOffset.Now.AddHours(1)); };
+        Action action = () => { CustomerAggregate customer = new(someting,someting,defaultPhoneNumber,defaultEmail,defaulAccuntNumber,DateTimeOffset.Now.AddHours(1)); };
         action.ShouldThrow<InvalidDateOfBirthException>();
     }
 
@@ -64,7 +65,7 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndSetDateOfBirth_ItShouldBeSameValue()
     {
         DateTimeOffset myBirthDate = new(1985, 5, 13,10,10,10,new TimeSpan(0));
-        CustomerAggregate customer = new(someting,someting,defaultPhoneNumber,defaultEmail, myBirthDate);
+        CustomerAggregate customer = new(someting,someting,defaultPhoneNumber,defaultEmail, defaulAccuntNumber, myBirthDate);
         customer.GetDateOfBirth.ShouldBe(myBirthDate);
     }
 
@@ -73,7 +74,7 @@ public class CustomerAggregate_UntiTest
     {
         Action action = () =>
         {
-            CustomerAggregate customer = new(someting, someting, null,defaultEmail);
+            CustomerAggregate customer = new(someting, someting, null,defaultEmail, defaulAccuntNumber);
 
         };
         action.ShouldThrow<InvalidPhoneNumberException>();
@@ -86,7 +87,7 @@ public class CustomerAggregate_UntiTest
     {
         Action action = () =>
         {
-            CustomerAggregate customer = new(someting, someting, invalidNumber, defaultEmail);
+            CustomerAggregate customer = new(someting, someting, invalidNumber, defaultEmail, defaulAccuntNumber);
 
         };
         action.ShouldThrow<InvalidPhoneNumberException>();
@@ -96,7 +97,7 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndSetDateOfPhoneNumber_ItShouldBeSameValue()
     {
         string myPhoneNumber = "00989396135891";
-        CustomerAggregate customer = new(someting, someting, myPhoneNumber,defaultEmail);
+        CustomerAggregate customer = new(someting, someting, myPhoneNumber,defaultEmail, defaulAccuntNumber);
         customer.GetPhoneNumber.ShouldBe(myPhoneNumber);
     }
 
@@ -105,7 +106,7 @@ public class CustomerAggregate_UntiTest
     {
         Action action = () =>
         {
-            CustomerAggregate customer = new(someting, someting, null, defaultEmail);
+            CustomerAggregate customer = new(someting, someting, null, defaultEmail, defaulAccuntNumber);
 
         };
         action.ShouldThrow<InvalidEmailException>();
@@ -119,7 +120,7 @@ public class CustomerAggregate_UntiTest
     {
         Action action = () =>
         {
-            CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, invalidEmail);
+            CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, invalidEmail, defaulAccuntNumber);
 
         };
         action.ShouldThrow<InvalidEmailException>();
@@ -129,7 +130,39 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndSetDateOfEmail_ItShouldBeSameValue()
     {
         string myEmail = "tarafdar.mansour@gmail.com";
-        CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, myEmail);
+        CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, myEmail, defaulAccuntNumber);
         customer.GetEmail.ShouldBe(myEmail);
+    }
+
+    public void WhenICreateNewCustomerAggregate_AndBankAccountNumberIsNull_ItShouldThrowException()
+    {
+        Action action = () =>
+        {
+            CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, defaultEmail, null);
+
+        };
+        action.ShouldThrow<InvalidIbanException>();
+    }
+
+    [Theory]
+    [InlineData("123131313")]
+    [InlineData("IR22222222222222222222222222")]
+    [InlineData("IR123")]
+    public void WhenICreateNewCustomerAggregate_AndBankAccuntNumberIsInvalid_ItShouldThrowException(string invalidAccountNumber)
+    {
+        Action action = () =>
+        {
+            CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, defaultEmail, invalidAccountNumber);
+
+        };
+        action.ShouldThrow<InvalidIbanException>();
+    }
+
+    [Fact]
+    public void WhenICreateNewCustomerAggregate_AndSetDateOfBankAccountNumber_ItShouldBeSameValue()
+    {
+        string myIban = "GB03SHHZ28711587148418";
+        CustomerAggregate customer = new(someting, someting, defaultPhoneNumber, defaultEmail, myIban);
+        customer.GetBankAccountNumber.ShouldBe(myIban);
     }
 }

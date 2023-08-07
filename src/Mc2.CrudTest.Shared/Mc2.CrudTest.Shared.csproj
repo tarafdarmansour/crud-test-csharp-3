@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="EmailValidation" Version="1.0.9" />
+    <PackageReference Include="IbanNet" Version="5.10.0" />
     <PackageReference Include="libphonenumber-csharp" Version="8.13.18" />
   </ItemGroup>
 
