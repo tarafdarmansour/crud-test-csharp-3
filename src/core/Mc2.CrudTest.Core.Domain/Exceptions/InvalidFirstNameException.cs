@@ -4,10 +4,10 @@ namespace Mc2.CrudTest.Core.Domain.Exceptions;
 
 public class InvalidFirstNameException : BaseException
 {
-    public InvalidFirstNameException(string firstName) : base($"FirstFirstName value {firstName} is invalid")
+    public InvalidFirstNameException(string firstName) : base($"FirstName value {firstName} is invalid")
     {
-        FirstFirstName = firstName;
+        FirstName = firstName;
     }
 
-    public string FirstFirstName { get; }
+    public string FirstName { get; }
 }

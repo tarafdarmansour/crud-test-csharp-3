@@ -16,7 +16,7 @@ public class CustomerAggregate_UntiTest
     [Fact]
     public void WhenICreateNewCustomerAggregate_AndFirstNameIsNull_ItShouldThrowException()
     {
-        Action action = () => {  CustomerAggregate customer = new CustomerAggregate(null); };
+        Action action = () => {  CustomerAggregate customer = new CustomerAggregate(null,"somethings"); };
         action.ShouldThrow<InvalidFirstNameException>();
     }
 
@@ -24,7 +24,22 @@ public class CustomerAggregate_UntiTest
     public void WhenICreateNewCustomerAggregate_AndSetFirstName_ItShouldBeSameValue()
     {
         string myFirstName = "Mansour";
-        CustomerAggregate customer = new CustomerAggregate(myFirstName);
+        CustomerAggregate customer = new CustomerAggregate(myFirstName, "somethings");
         customer.GetFirstName.ShouldBe(myFirstName);
+    }
+
+    [Fact]
+    public void WhenICreateNewCustomerAggregate_AndLastNameIsNull_ItShouldThrowException()
+    {
+        Action action = () => { CustomerAggregate customer = new CustomerAggregate("somethings",null); };
+        action.ShouldThrow<InvalidLastNameException>();
+    }
+
+    [Fact]
+    public void WhenICreateNewCustomerAggregate_AndSetLastName_ItShouldBeSameValue()
+    {
+        string myLastName = "Tarafdar";
+        CustomerAggregate customer = new CustomerAggregate( "somethings", myLastName);
+        customer.GetLastName.ShouldBe(myLastName);
     }
 }
