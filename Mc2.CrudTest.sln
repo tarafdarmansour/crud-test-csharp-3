@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{1C82D60E-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mc2.CrudTest.Core.Domain", "src\core\Mc2.CrudTest.Core.Domain\Mc2.CrudTest.Core.Domain.csproj", "{7F132109-70FE-4B41-BFFB-6F0C89708980}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mc2.CrudTest.Shared", "src\Mc2.CrudTest.Shared\Mc2.CrudTest.Shared.csproj", "{97D2A888-A688-4760-AED2-32E2419187E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{7F132109-70FE-4B41-BFFB-6F0C89708980}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F132109-70FE-4B41-BFFB-6F0C89708980}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F132109-70FE-4B41-BFFB-6F0C89708980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97D2A888-A688-4760-AED2-32E2419187E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97D2A888-A688-4760-AED2-32E2419187E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97D2A888-A688-4760-AED2-32E2419187E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97D2A888-A688-4760-AED2-32E2419187E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{833D1344-82B9-4623-9820-8F1E77BAEF83} = {14D4DF48-E02B-47E8-9280-C4271E10644A}
 		{1C82D60E-9B63-483C-9FDE-DCE88096A1EF} = {5EA0539C-37FC-4215-A710-8A58C65F2A66}
 		{7F132109-70FE-4B41-BFFB-6F0C89708980} = {1C82D60E-9B63-483C-9FDE-DCE88096A1EF}
+		{97D2A888-A688-4760-AED2-32E2419187E5} = {5EA0539C-37FC-4215-A710-8A58C65F2A66}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B5A26C9-68C1-49D9-9F32-AF907A1730C2}

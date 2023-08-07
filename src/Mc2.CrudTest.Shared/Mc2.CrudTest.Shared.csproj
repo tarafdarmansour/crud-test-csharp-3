@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Mc2.CrudTest.Shared\Mc2.CrudTest.Shared.csproj" />
-  </ItemGroup>
-
 </Project>
