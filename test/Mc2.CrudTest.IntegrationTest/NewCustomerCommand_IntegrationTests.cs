@@ -1,7 +1,9 @@
 using Mc2.CrudTest.Core.Application.Commands.NewCustomer;
 using Mc2.CrudTest.Core.Domain.Aggregates;
 using Mc2.CrudTest.Presentation;
+using Mc2.CrudTest.Shared.Domain;
 using Mc2.CrudTest.Shared.Handlers;
+using Mc2.CrudTest.Shared.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
