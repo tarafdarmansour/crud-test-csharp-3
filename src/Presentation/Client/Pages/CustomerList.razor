@@ -1,0 +1,50 @@
+﻿@page "/customers"
+@using Mc2.CrudTest.Presentation.Shared.Models
+@inject HttpClient Http
+
+<PageTitle>Customers List</PageTitle>
+
+<h1>Customers List</h1>
+
+
+@if (customers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>FirstName</th>
+                <th>LastName</th>
+                <th>Email</th>
+                <th>DateOfBirth</th>
+                <th>PhoneNumber</th>
+                <th>AccountNumber</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.FirstName</td>
+                    <td>@customer.LastName</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.DateOfBirth</td>
+                    <td>@customer.PhoneNumber</td>
+                    <td>@customer.AccountNumber</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private CustomerDto[]? customers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await Http.GetFromJsonAsync<CustomerDto[]>("Customer");
+    }
+}

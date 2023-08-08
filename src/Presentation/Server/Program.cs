@@ -1,3 +1,6 @@
+using Blazorise;
+using Blazorise.Bootstrap;
+using Blazorise.Icons.FontAwesome;
 using Mc2.CrudTest.Core.Application.Commands.NewCustomer;
 using Mc2.CrudTest.Core.Domain.Aggregates;
 using Mc2.CrudTest.Core.Domain.Events;
@@ -53,6 +56,7 @@ namespace Mc2.CrudTest.Presentation
                 cfg => cfg.AddJsonFile(
                     builder.Environment.EnvironmentName == "Production" ? "rabbit.Production.json" : "rabbit.Development.json")
             );
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -1,0 +1,26 @@
+﻿@page "/addcustomer"
+@using Mc2.CrudTest.Core.Application.Commands.NewCustomer
+
+@inject HttpClient Http
+
+<PageTitle>Add Customer</PageTitle>
+
+<h1>Add Customer</h1>
+
+<Button Color="Color.Primary" Clicked="@OnButtonClicked">Click me</Button>
+
+@code {
+    async Task OnButtonClicked()
+    {
+        var customer = new NewCustomerCommand
+        {
+            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            AccountNumber = "GB03SHHZ28711587148418",
+            Email = "tarafdar.mansour@gmail.com",
+            FirstName = "Mansour",
+            LastName = "Tarafdar",
+            PhoneNumber = "00989396135891"
+        };
+        await Http.PostAsJsonAsync("Customer",customer);
+    }
+}
