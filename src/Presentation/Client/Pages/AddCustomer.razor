@@ -7,20 +7,57 @@
 
 <h1>Add Customer</h1>
 
-<Button Color="Color.Primary" Clicked="@OnButtonClicked">Click me</Button>
+<EditForm Model="@CustomerCommand" OnValidSubmit="@SaveCustomer">
+    <FluentValidationValidator />
+    <Microsoft.AspNetCore.Components.Forms.ValidationSummary />
+
+    <Field>
+        <FieldLabel>Firstname</FieldLabel>
+        <TextEdit Placeholder="Enter Firstname" @bind-text="@CustomerCommand.FirstName"/>
+    </Field>
+    <Field>
+        <FieldLabel>Lastname</FieldLabel>
+        <TextEdit Placeholder="Enter Lastname" @bind-text="@CustomerCommand.LastName" />
+    </Field>
+    <Field>
+        <FieldLabel>Email address</FieldLabel>
+        <TextEdit Placeholder="Enter email" @bind-text="@CustomerCommand.Email"/>
+    </Field>
+    <Field>
+        <FieldLabel>MobileNumber</FieldLabel>
+        <TextEdit Placeholder="Enter your mobile number" @bind-text="@CustomerCommand.PhoneNumber"/>
+    </Field>
+    <Field>
+        <FieldLabel>Date of Birth</FieldLabel>
+        <Addons>
+            <Addon AddonType="AddonType.Body">
+                <DatePicker @ref="@datePicker" TValue="DateTime?"/>
+            </Addon>
+            <Addon AddonType="AddonType.End">
+                <Button Color="Color.Light" Clicked="@(() => datePicker.ToggleAsync())">
+                    <Icon Name="IconName.CalendarDay"/>
+                </Button>
+            </Addon>
+        </Addons>
+    </Field>
+
+    <Field>
+        <FieldLabel>BankAccountNumber</FieldLabel>
+        <TextEdit Placeholder="Enter your birthdate" @bind-text="@CustomerCommand.AccountNumber"/>
+    </Field>
+
+    <Button Color="Color.Primary" Type="ButtonType.Submit" >Save Customer</Button>
+
+</EditForm>
+
 
 @code {
-    async Task OnButtonClicked()
+    NewCustomerCommand CustomerCommand { get; set; } = new();
+    DatePicker<DateTime?> datePicker;
+
+    async Task SaveCustomer()
     {
-        var customer = new NewCustomerCommand
-        {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
-            AccountNumber = "GB03SHHZ28711587148418",
-            Email = "tarafdar.mansour@gmail.com",
-            FirstName = "Mansour",
-            LastName = "Tarafdar",
-            PhoneNumber = "00989396135891"
-        };
-        await Http.PostAsJsonAsync("Customer",customer);
+            CustomerCommand.DateOfBirth = datePicker.Date;
+            await Http.PostAsJsonAsync("Customer", CustomerCommand);
     }
 }

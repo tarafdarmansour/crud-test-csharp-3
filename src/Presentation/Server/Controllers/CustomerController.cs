@@ -27,7 +27,7 @@ public class CustomerController : ControllerBase
             {
                 AccountNumber = c.AccountNumber,
                 PhoneNumber = c.PhoneNumber,
-                DateOfBirth = c.DateOfBirth == null ? "" : c.DateOfBirth.ToString(),
+                DateOfBirth = c.DateOfBirth == null ? "" : c.DateOfBirth.Value.Date.ToString("MM/dd/yyyy"),
                 Email = c.Email,
                 FirstName = c.FirstName,
                 LastName = c.LastName,

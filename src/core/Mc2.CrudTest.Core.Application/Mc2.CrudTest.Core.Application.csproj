@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Mc2.CrudTest.Core.Domain\Mc2.CrudTest.Core.Domain.csproj" />
   </ItemGroup>
 
