@@ -4,5 +4,5 @@ namespace Mc2.CrudTest.Shared.Producers;
 
 public interface IEventProducer
 {
-    Task ProduceAsync<T>(string exchangeName, T @event, string eventType) where T : BaseEvent;
+    Task ProduceAsync<T>(string exchangeName, T @event) where T : BaseEvent;
 }

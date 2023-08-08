@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{F891C8B5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mc2.CrudTest.Infra", "src\infra\Mc2.CrudTest.Infra\Mc2.CrudTest.Infra.csproj", "{08711F86-150C-4A63-8626-DD459D19E446}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mc2.CrudTest.IntegrationTest", "test\Mc2.CrudTest.IntegrationTest\Mc2.CrudTest.IntegrationTest.csproj", "{C4076DFA-4549-42C7-BA74-463155A47973}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mc2.CrudTest.IntegrationTest", "test\Mc2.CrudTest.IntegrationTest\Mc2.CrudTest.IntegrationTest.csproj", "{C4076DFA-4549-42C7-BA74-463155A47973}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

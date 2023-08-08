@@ -54,7 +54,7 @@ public class EventStore : IEventStore
             await _eventStoreRepository.SaveAsync(eventModel);
 
             var topic = Environment.GetEnvironmentVariable("RABBIT_EXCHANGE");
-            await _eventProducer.ProduceAsync(topic, @event, eventType);
+            await _eventProducer.ProduceAsync(topic, @event);
         }
     }
 }

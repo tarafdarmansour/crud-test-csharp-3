@@ -20,18 +20,22 @@ namespace Mc2.CrudTest.Infra.Producers
             _busClient = busClient;
         }
 
-        public async Task ProduceAsync<T>(string exchangeName, T @event, string eventType) where T : BaseEvent
+        public async Task ProduceAsync<T>(string exchangeName, T @event) where T : BaseEvent
         {
+            string eventType = @event.GetType().Name;
             var value = JsonSerializer.Serialize(@event, @event.GetType());
-            await _busClient.PublishAsync(value, Guid.NewGuid(),
-                cfg =>
-                {
-                    cfg.WithExchange(excfg =>
-                            {
-                                excfg.WithDurability(true);
-                                excfg.WithName(exchangeName);
-                            });
-                });
+            await _busClient.PublishAsync(value,
+                cfg => cfg.UsePublishConfiguration(
+                    c => c
+                        .OnDeclaredExchange(GetExchangeDeclaration(eventType))
+                ));
+        }
+        private Action<RawRabbit.Configuration.Exchange.IExchangeDeclarationBuilder> GetExchangeDeclaration(string name)
+        {
+            string? exchange = Environment.GetEnvironmentVariable("RABBIT_EXCHANGE");
+            return e => e
+                .WithName(exchange)
+                .WithArgument("key", name);
         }
     }
 }
