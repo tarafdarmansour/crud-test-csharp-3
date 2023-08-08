@@ -1,12 +1,15 @@
 using Mc2.CrudTest.Core.Application.Commands.NewCustomer;
 using Mc2.CrudTest.Core.Domain.Aggregates;
 using Mc2.CrudTest.Core.Domain.Events;
+using Mc2.CrudTest.Core.Domain.Repositories;
 using Mc2.CrudTest.Infra.Configs;
+using Mc2.CrudTest.Infra.Consumers;
 using Mc2.CrudTest.Infra.DataAccess;
 using Mc2.CrudTest.Infra.Handlers;
 using Mc2.CrudTest.Infra.Producers;
 using Mc2.CrudTest.Infra.Repositories;
 using Mc2.CrudTest.Infra.Store;
+using Mc2.CrudTest.Shared.Consumers;
 using Mc2.CrudTest.Shared.Domain;
 using Mc2.CrudTest.Shared.Events;
 using Mc2.CrudTest.Shared.Handlers;
@@ -24,6 +27,8 @@ namespace Mc2.CrudTest.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            BsonClassMap.RegisterClassMap<BaseEvent>();
+            BsonClassMap.RegisterClassMap<CustomerCreatedEvent>();
 
             Action<DbContextOptionsBuilder> configureDbContext = o => o.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
             builder.Services.AddDbContext<DatabaseContext>(configureDbContext);
@@ -31,15 +36,15 @@ namespace Mc2.CrudTest.Presentation
 
             var dataContext = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
             dataContext.Database.EnsureCreated();
-
-            BsonClassMap.RegisterClassMap<BaseEvent>();
-            BsonClassMap.RegisterClassMap<CustomerCreatedEvent>();
-
+            
             builder.Services.Configure<MongoDbConfig>(builder.Configuration.GetSection(nameof(MongoDbConfig)));
             builder.Services.AddTransient<IEventStoreRepository, EventStoreRepository>();
             builder.Services.AddTransient<IEventStore, EventStore>();
             builder.Services.AddTransient<IEventProducer, EventProducer>();
+            builder.Services.AddTransient<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddTransient<IEventConsumer, EventConsumer>();
             builder.Services.AddTransient<IEventSourcingHandler<CustomerAggregate>, EventSourcingHandler>();
+            builder.Services.AddHostedService<ConsumerHostedService>();
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
