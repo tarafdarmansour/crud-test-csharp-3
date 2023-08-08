@@ -28,16 +28,16 @@ namespace Mc2.CrudTest.Infra.Repositories
             _ = await context.SaveChangesAsync();
         }
 
-        public IQueryable<CustomerEntity> Get(Expression<Func<CustomerEntity, bool>> predict)
+        public IList<CustomerEntity> Get(Expression<Func<CustomerEntity, bool>> predict)
         {
             using DatabaseContext context = _contextFactory.CreateDbContext();
-            return context.Customers.AsNoTracking().Where(predict);
+            return context.Customers.AsNoTracking().Where(predict).ToList();
         }
 
-        public IQueryable<CustomerEntity> GetAll()
+        public IList<CustomerEntity> GetAll()
         {
             using DatabaseContext context = _contextFactory.CreateDbContext();
-            return context.Customers.AsNoTracking();
+            return context.Customers.AsNoTracking().ToList();
         }
     }
 }

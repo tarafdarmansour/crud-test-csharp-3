@@ -6,6 +6,6 @@ namespace Mc2.CrudTest.Core.Domain.Repositories;
 public interface ICustomerRepository
 {
     Task CreateAsync(CustomerEntity customer);
-    IQueryable<CustomerEntity> Get(Expression<Func<CustomerEntity, bool>> predict);
-    IQueryable<CustomerEntity> GetAll();
+    IList<CustomerEntity> Get(Expression<Func<CustomerEntity, bool>> predict);
+    IList<CustomerEntity> GetAll();
 }
