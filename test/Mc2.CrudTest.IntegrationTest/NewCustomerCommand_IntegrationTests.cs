@@ -1,17 +1,16 @@
+using System.Reflection;
+using Bogus;
 using FluentAssertions;
 using Mc2.CrudTest.Core.Application.Commands.NewCustomer;
 using Mc2.CrudTest.Core.Domain.Aggregates;
 using Mc2.CrudTest.Core.Domain.Exceptions;
+using Mc2.CrudTest.Core.Domain.ValueObjects;
 using Mc2.CrudTest.Presentation;
-using Mc2.CrudTest.Shared.Domain;
 using Mc2.CrudTest.Shared.Handlers;
-using Mc2.CrudTest.Shared.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using System.Reflection;
-using Bogus;
 
 namespace Mc2.CrudTest.IntegrationTest;
 
@@ -28,6 +27,8 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     public async void GivenNewCustomerCommand_AndDataIsValid_WhenIExecuteCommand_AndGetCustomerById_ItShouldBeSame()
     {
         Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEvents");
+        string phoneNumber = "00989396135891";
+        PhoneNumber phoneNumberValueObject = new PhoneNumber(phoneNumber);
         NewCustomerCommand newCustomerCommand = new()
         {
             DateOfBirth = GetFakeDateOfBirth(),
@@ -35,7 +36,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
             Email = GetFakeEmail(),
             FirstName = GetFakeFirstName(),
             LastName = GetFakeLastName(),
-            PhoneNumber = "00989396135891"
+            PhoneNumber = phoneNumber
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
         Guid customerId = await bus.Send(newCustomerCommand);
@@ -46,7 +47,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
 
         customerInEventSource.ShouldNotBeNull();
         customerInEventSource.GetDateOfBirth.ShouldBeEquivalentTo(newCustomerCommand.DateOfBirth);
-        customerInEventSource.GetPhoneNumber.ShouldBeEquivalentTo(newCustomerCommand.PhoneNumber);
+        customerInEventSource.GetPhoneNumber.ShouldBeEquivalentTo(phoneNumberValueObject.Number);
         customerInEventSource.GetBankAccountNumber.ShouldBeEquivalentTo(newCustomerCommand.AccountNumber);
         customerInEventSource.GetEmail.ShouldBeEquivalentTo(newCustomerCommand.Email);
         customerInEventSource.GetFirstName.ShouldBeEquivalentTo(newCustomerCommand.FirstName);
@@ -57,7 +58,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     public async void GivenNewCustomerCommand_AndDataIsValid_WhenIAddCustomerWithDuplicateEmail_ItShouldThrowException()
     {
         Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEvents");
-        var email = GetFakeEmail();
+        string email = GetFakeEmail();
         NewCustomerCommand newCustomerCommand1 = new()
         {
             DateOfBirth = GetFakeDateOfBirth(),
@@ -88,9 +89,9 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     public async void GivenNewCustomerCommand_AndDataIsValid_WhenIAddCustomerWithDuplicateBio_ItShouldThrowException()
     {
         Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEvents");
-        var firstName = GetFakeFirstName();
-        var lastName = GetFakeLastName();
-        var dateOfBirth = GetFakeDateOfBirth();
+        string firstName = GetFakeFirstName();
+        string lastName = GetFakeLastName();
+        DateTime dateOfBirth = GetFakeDateOfBirth();
         NewCustomerCommand newCustomerCommand1 = new()
         {
             DateOfBirth = dateOfBirth,
@@ -234,22 +235,25 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
 
     private string GetFakeEmail()
     {
-        Faker faker = new Faker();
+        Faker faker = new();
         return faker.Internet.Email();
     }
+
     private string GetFakeFirstName()
     {
-        Faker faker = new Faker();
+        Faker faker = new();
         return faker.Person.FirstName;
     }
+
     private string GetFakeLastName()
     {
-        Faker faker = new Faker();
+        Faker faker = new();
         return faker.Person.LastName;
     }
+
     private DateTime GetFakeDateOfBirth()
     {
-        Faker faker = new Faker();
+        Faker faker = new();
         return faker.Person.DateOfBirth;
     }
 }

@@ -104,9 +104,10 @@ public class CustomerAggregate_UntiTest
     [Fact]
     public void WhenICreateNewCustomerAggregate_AndSetDateOfPhoneNumber_ItShouldBeSameValue()
     {
-        string myPhoneNumber = "00989396135891";
-        CustomerAggregate customer = new(someting, someting, myPhoneNumber,defaultEmail, defaulAccuntNumber);
-        customer.GetPhoneNumber.ShouldBe(myPhoneNumber);
+        var phoneNumber = "00989396135891";
+        var phoneNumberValueObject = new PhoneNumber(phoneNumber);
+        CustomerAggregate customer = new(someting, someting, phoneNumber, defaultEmail, defaulAccuntNumber);
+        customer.GetPhoneNumber.ShouldBe(phoneNumberValueObject);
     }
 
 
