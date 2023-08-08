@@ -36,18 +36,49 @@ namespace Mc2.CrudTest.Core.Application.Commands.NewCustomer
         
         public async Task<Guid> Handle(NewCustomerCommand cmd, CancellationToken cancellationToken)
         {
-            if (EmailExist(cmd.Email))
-                throw new CustomerDuplicateEmailException(cmd.Email);
-
-            var customer = new CustomerAggregate(cmd.FirstName, cmd.LastName, cmd.PhoneNumber, cmd.Email,
-                cmd.AccountNumber, cmd.DateOfBirth);
+            ThrowIfCustomerExist(cmd);
+            CustomerAggregate customer = GenerateCustomerAggregate(cmd);
             await _eventSourcingHandler.SaveAsync(customer);
             return customer.GetId();
+        }
+
+        private static CustomerAggregate GenerateCustomerAggregate(NewCustomerCommand cmd)
+        {
+            var customer = new CustomerAggregate(cmd.FirstName, cmd.LastName, cmd.PhoneNumber, cmd.Email,
+                cmd.AccountNumber, cmd.DateOfBirth);
+            return customer;
+        }
+
+        private void ThrowIfCustomerExist(NewCustomerCommand cmd)
+        {
+            ThrowIfCustomerExistByEmail(cmd);
+            ThrowIfCustomerExistByBio(cmd);
+        }
+
+        private void ThrowIfCustomerExistByBio(NewCustomerCommand cmd)
+        {
+            if (CustomerBioExist(cmd.FirstName, cmd.LastName, cmd.DateOfBirth))
+                throw new CustomerDuplicateBioException(cmd.FirstName, cmd.LastName, cmd.DateOfBirth);
+        }
+
+        private void ThrowIfCustomerExistByEmail(NewCustomerCommand cmd)
+        {
+            if (EmailExist(cmd.Email))
+                throw new CustomerDuplicateEmailException(cmd.Email);
         }
 
         private bool EmailExist(string email)
         {
             return _customerRepository.Get(c => c.Email == email).Any();
         }
+
+        private bool CustomerBioExist(string firstName,string lastName,DateTimeOffset? dateOfBirth)
+        {
+             var customers = _customerRepository.Get(c => c.FirstName == firstName && c.LastName == lastName).ToList();
+             if (dateOfBirth == null)
+                 return customers.Any();
+             return customers.Any(c => c.DateOfBirth.Value.Date == dateOfBirth.Value.Date);
+        }
+
     }
 }

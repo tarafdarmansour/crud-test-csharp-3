@@ -27,14 +27,14 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     [Fact]
     public async void GivenNewCustomerCommand_AndDataIsValid_WhenIExecuteCommand_AndGetCustomerById_ItShouldBeSame()
     {
-        Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEventsTest");
+        Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEvents");
         NewCustomerCommand newCustomerCommand = new()
         {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            DateOfBirth = GetFakeDateOfBirth(),
             AccountNumber = "GB03SHHZ28711587148418",
             Email = GetFakeEmail(),
-            FirstName = "Mansour",
-            LastName = "Tarafdar",
+            FirstName = GetFakeFirstName(),
+            LastName = GetFakeLastName(),
             PhoneNumber = "00989396135891"
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
@@ -56,25 +56,67 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     [Fact]
     public async void GivenNewCustomerCommand_AndDataIsValid_WhenIAddCustomerWithDuplicateEmail_ItShouldThrowException()
     {
-        Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEventsTest");
+        Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEvents");
         var email = GetFakeEmail();
-        NewCustomerCommand newCustomerCommand = new()
+        NewCustomerCommand newCustomerCommand1 = new()
         {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            DateOfBirth = GetFakeDateOfBirth(),
             AccountNumber = "GB03SHHZ28711587148418",
             Email = email,
-            FirstName = "Mansour",
-            LastName = "Tarafdar",
+            FirstName = GetFakeFirstName(),
+            LastName = GetFakeLastName(),
             PhoneNumber = "00989396135891"
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
-        await bus.Send(newCustomerCommand);
-
-        Action action = () => bus.Send(newCustomerCommand).GetAwaiter().GetResult();
+        await bus.Send(newCustomerCommand1);
+        NewCustomerCommand newCustomerCommand2 = new()
+        {
+            DateOfBirth = GetFakeDateOfBirth(),
+            AccountNumber = "GB03SHHZ28711587148418",
+            Email = email,
+            FirstName = GetFakeFirstName(),
+            LastName = GetFakeLastName(),
+            PhoneNumber = "00989396135891"
+        };
+        Action action = () => bus.Send(newCustomerCommand2).GetAwaiter().GetResult();
         action.Should()
             .Throw<TargetInvocationException>()
             .WithInnerException<CustomerDuplicateEmailException>();
     }
+
+    [Fact]
+    public async void GivenNewCustomerCommand_AndDataIsValid_WhenIAddCustomerWithDuplicateBio_ItShouldThrowException()
+    {
+        Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEvents");
+        var firstName = GetFakeFirstName();
+        var lastName = GetFakeLastName();
+        var dateOfBirth = GetFakeDateOfBirth();
+        NewCustomerCommand newCustomerCommand1 = new()
+        {
+            DateOfBirth = dateOfBirth,
+            AccountNumber = "GB03SHHZ28711587148418",
+            Email = GetFakeEmail(),
+            FirstName = firstName,
+            LastName = lastName,
+            PhoneNumber = "00989396135891"
+        };
+        IMediator bus = _factory.Services.GetRequiredService<IMediator>();
+        await bus.Send(newCustomerCommand1);
+        NewCustomerCommand newCustomerCommand2 = new()
+        {
+            DateOfBirth = dateOfBirth,
+            AccountNumber = "GB03SHHZ28711587148418",
+            Email = GetFakeEmail(),
+            FirstName = firstName,
+            LastName = lastName,
+            PhoneNumber = "00989396135891"
+        };
+        Action action = () => bus.Send(newCustomerCommand2).GetAwaiter().GetResult();
+        action.Should()
+            .Throw<TargetInvocationException>()
+            .WithInnerException<CustomerDuplicateEmailException>();
+    }
+
 
     [Fact]
     public void GivenNewCustomerCommand_AndDateOfBirthIsInvalid_WhenIExecuteCommand_ItShouldThrowException()
@@ -84,8 +126,8 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
             DateOfBirth = DateTimeOffset.Now.AddYears(1),
             AccountNumber = "GB03SHHZ28711587148418",
             Email = GetFakeEmail(),
-            FirstName = "Mansour",
-            LastName = "Tarafdar",
+            FirstName = GetFakeFirstName(),
+            LastName = GetFakeLastName(),
             PhoneNumber = "00989396135891"
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
@@ -100,11 +142,11 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     {
         NewCustomerCommand newCustomerCommand = new()
         {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            DateOfBirth = GetFakeDateOfBirth(),
             AccountNumber = "GB11111111111111111",
             Email = GetFakeEmail(),
-            FirstName = "Mansour",
-            LastName = "Tarafdar",
+            FirstName = GetFakeFirstName(),
+            LastName = GetFakeLastName(),
             PhoneNumber = "00989396135891"
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
@@ -119,11 +161,11 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     {
         NewCustomerCommand newCustomerCommand = new()
         {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            DateOfBirth = GetFakeDateOfBirth(),
             AccountNumber = "GB03SHHZ28711587148418",
             Email = "tarafdar.mansour",
-            FirstName = "Mansour",
-            LastName = "Tarafdar",
+            FirstName = GetFakeFirstName(),
+            LastName = GetFakeLastName(),
             PhoneNumber = "00989396135891"
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
@@ -138,11 +180,11 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     {
         NewCustomerCommand newCustomerCommand = new()
         {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            DateOfBirth = GetFakeDateOfBirth(),
             AccountNumber = "GB03SHHZ28711587148418",
             Email = GetFakeEmail(),
             FirstName = "",
-            LastName = "Tarafdar",
+            LastName = GetFakeLastName(),
             PhoneNumber = "00989396135891"
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
@@ -157,10 +199,10 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     {
         NewCustomerCommand newCustomerCommand = new()
         {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            DateOfBirth = GetFakeDateOfBirth(),
             AccountNumber = "GB03SHHZ28711587148418",
             Email = GetFakeEmail(),
-            FirstName = "Mansour",
+            FirstName = GetFakeFirstName(),
             LastName = "",
             PhoneNumber = "00989396135891"
         };
@@ -176,11 +218,11 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     {
         NewCustomerCommand newCustomerCommand = new()
         {
-            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            DateOfBirth = GetFakeDateOfBirth(),
             AccountNumber = "GB03SHHZ28711587148418",
             Email = GetFakeEmail(),
-            FirstName = "Mansour",
-            LastName = "Tarafdar",
+            FirstName = GetFakeFirstName(),
+            LastName = GetFakeLastName(),
             PhoneNumber = "00985891"
         };
         IMediator bus = _factory.Services.GetRequiredService<IMediator>();
@@ -194,5 +236,20 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     {
         Faker faker = new Faker();
         return faker.Internet.Email();
+    }
+    private string GetFakeFirstName()
+    {
+        Faker faker = new Faker();
+        return faker.Person.FirstName;
+    }
+    private string GetFakeLastName()
+    {
+        Faker faker = new Faker();
+        return faker.Person.LastName;
+    }
+    private DateTime GetFakeDateOfBirth()
+    {
+        Faker faker = new Faker();
+        return faker.Person.DateOfBirth;
     }
 }
