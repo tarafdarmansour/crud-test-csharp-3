@@ -7,4 +7,5 @@ public interface ICustomerRepository
 {
     Task CreateAsync(CustomerEntity customer);
     IQueryable<CustomerEntity> Get(Expression<Func<CustomerEntity, bool>> predict);
+    IQueryable<CustomerEntity> GetAll();
 }

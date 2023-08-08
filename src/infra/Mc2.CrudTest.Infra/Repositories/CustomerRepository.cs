@@ -33,5 +33,11 @@ namespace Mc2.CrudTest.Infra.Repositories
             using DatabaseContext context = _contextFactory.CreateDbContext();
             return context.Customers.AsNoTracking().Where(predict);
         }
+
+        public IQueryable<CustomerEntity> GetAll()
+        {
+            using DatabaseContext context = _contextFactory.CreateDbContext();
+            return context.Customers.AsNoTracking();
+        }
     }
 }
