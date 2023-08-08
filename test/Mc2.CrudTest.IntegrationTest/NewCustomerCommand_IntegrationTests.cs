@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using System.Reflection;
+using Bogus;
 
 namespace Mc2.CrudTest.IntegrationTest;
 
@@ -31,7 +32,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
         {
             DateOfBirth = DateTimeOffset.Now.AddYears(-38),
             AccountNumber = "GB03SHHZ28711587148418",
-            Email = "tarafdar.mansour@gmail.com",
+            Email = GetFakeEmail(),
             FirstName = "Mansour",
             LastName = "Tarafdar",
             PhoneNumber = "00989396135891"
@@ -53,13 +54,36 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
     }
 
     [Fact]
+    public async void GivenNewCustomerCommand_AndDataIsValid_WhenIAddCustomerWithDuplicateEmail_ItShouldThrowException()
+    {
+        Environment.SetEnvironmentVariable("RABBIT_EXCHANGE", "CustomerEventsTest");
+        var email = GetFakeEmail();
+        NewCustomerCommand newCustomerCommand = new()
+        {
+            DateOfBirth = DateTimeOffset.Now.AddYears(-38),
+            AccountNumber = "GB03SHHZ28711587148418",
+            Email = email,
+            FirstName = "Mansour",
+            LastName = "Tarafdar",
+            PhoneNumber = "00989396135891"
+        };
+        IMediator bus = _factory.Services.GetRequiredService<IMediator>();
+        await bus.Send(newCustomerCommand);
+
+        Action action = () => bus.Send(newCustomerCommand).GetAwaiter().GetResult();
+        action.Should()
+            .Throw<TargetInvocationException>()
+            .WithInnerException<CustomerDuplicateEmailException>();
+    }
+
+    [Fact]
     public void GivenNewCustomerCommand_AndDateOfBirthIsInvalid_WhenIExecuteCommand_ItShouldThrowException()
     {
         NewCustomerCommand newCustomerCommand = new()
         {
             DateOfBirth = DateTimeOffset.Now.AddYears(1),
             AccountNumber = "GB03SHHZ28711587148418",
-            Email = "tarafdar.mansour@gmail.com",
+            Email = GetFakeEmail(),
             FirstName = "Mansour",
             LastName = "Tarafdar",
             PhoneNumber = "00989396135891"
@@ -78,7 +102,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
         {
             DateOfBirth = DateTimeOffset.Now.AddYears(-38),
             AccountNumber = "GB11111111111111111",
-            Email = "tarafdar.mansour@gmail.com",
+            Email = GetFakeEmail(),
             FirstName = "Mansour",
             LastName = "Tarafdar",
             PhoneNumber = "00989396135891"
@@ -116,7 +140,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
         {
             DateOfBirth = DateTimeOffset.Now.AddYears(-38),
             AccountNumber = "GB03SHHZ28711587148418",
-            Email = "tarafdar.mansour@gmail.com",
+            Email = GetFakeEmail(),
             FirstName = "",
             LastName = "Tarafdar",
             PhoneNumber = "00989396135891"
@@ -135,7 +159,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
         {
             DateOfBirth = DateTimeOffset.Now.AddYears(-38),
             AccountNumber = "GB03SHHZ28711587148418",
-            Email = "tarafdar.mansour@gmail.com",
+            Email = GetFakeEmail(),
             FirstName = "Mansour",
             LastName = "",
             PhoneNumber = "00989396135891"
@@ -154,7 +178,7 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
         {
             DateOfBirth = DateTimeOffset.Now.AddYears(-38),
             AccountNumber = "GB03SHHZ28711587148418",
-            Email = "tarafdar.mansour@gmail.com",
+            Email = GetFakeEmail(),
             FirstName = "Mansour",
             LastName = "Tarafdar",
             PhoneNumber = "00985891"
@@ -164,5 +188,11 @@ public class NewCustomerCommand_IntegrationTests : IClassFixture<WebApplicationF
         action.Should()
             .Throw<TargetInvocationException>()
             .WithInnerException<InvalidPhoneNumberException>();
+    }
+
+    private string GetFakeEmail()
+    {
+        Faker faker = new Faker();
+        return faker.Internet.Email();
     }
 }
